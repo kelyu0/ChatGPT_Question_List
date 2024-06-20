@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ChatGPT Sidebar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px;
+      width: 300px;
+      height: 400px;
+      overflow: hidden;
+    }
+
+    #question-container {
+      overflow-y: auto;
+      max-height: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .question {
+      padding: 6px;
+      margin: 0 -10px; /* 使其宽度覆盖整个容器 */
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+      white-space: nowrap; /* 强制单行显示 */
+      overflow: hidden; /* 隐藏溢出的部分 */
+      text-overflow: ellipsis; /* 使用省略号表示溢出的部分 */
+    }
+
+    .question:hover {
+      background-color: #f0f0f0; /* 背景颜色变为浅灰色 */
+    }
+
+    .question:first-child {
+      border-top: 1px solid #ccc; /* 第一个问题顶部加上分割线 */
+    }
+  </style>
+</head>
+<body>
+  <div id="question-container"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
