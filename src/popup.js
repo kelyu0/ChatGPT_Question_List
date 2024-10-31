@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('question-container');
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("question-container");
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const tab = tabs[0];
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const el = document.getElementById(id);
                     if (el) {
                       el.scrollIntoView({
-                        behavior: "smooth",
+                        behavior: "smooth", //instant
                         block: "center",
                       });
                     }
@@ -62,8 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 response.forEach((question, index) => {
                   const questionElement = document.createElement("div");
                   questionElement.className = "question";
+                  // console.log("question", question);
                   questionElement.innerText =
-                    "- " + question.replace(/\n/g, " "); // 替换换行符为空格
+                    "- " + question.replace(/[\n\r]/g, " "); // 替换换行符为空格
                   questionElement.title = question; // 设置title属性以显示完整内容
                   questionElement.addEventListener("click", () => {
                     chrome.tabs.sendMessage(tabId, {
