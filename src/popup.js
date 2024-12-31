@@ -66,11 +66,14 @@ document.addEventListener("DOMContentLoaded", () => {
                           );
                         });
 
+                        const maxHeaderLevel = headers.length > 0 ? Math.min(...headers.map(h => h.level)) : null;
+
                         pairs.push({
                           question: null,
                           answers: answers,
                           questionId: null,
                           headers: headers,
+                          maxHeaderLevel: maxHeaderLevel,
                         });
                       }
                     });
@@ -106,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 response.forEach((pair, index) => {
                   if (pair.question) {
                     const questionElement = document.createElement("div");
-                    questionElement.className = "question";
+                    questionElement.className = "question oneline";
                     questionElement.innerText = `Q: ${pair.question}`;
                     questionElement.title = pair.question;
                     questionElement.addEventListener("click", () => {
@@ -120,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                   if (pair.answers.length > 0) {
                     const answerContainer = document.createElement("div");
-                    answerContainer.className = "answer";
+                    answerContainer.className = "answer oneline";
 
                     pair.answers.forEach((answer) => {
                       const answerElement = document.createElement("div");
@@ -136,9 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     pair.headers.forEach((header) => {
                       const headerElement = document.createElement("div");
-                      const indentLevel = header.level - 1; // Adjust indentation
-                      headerElement.style.marginLeft = `${indentLevel * 20}px`;
-                      headerElement.innerText = `H${header.level}: ${header.text}`;
+                      const indentLevel = pair.maxHeaderLevel ? header.level - pair.maxHeaderLevel : header.level - 1;
+                      headerElement.style.marginLeft = `${Math.max(0, indentLevel) * 20}px`;
+                      headerElement.innerText = `H${header.level}: ${header.text}`.replace(/[\n\r]/g, " ");
+                      headerElement.className = "oneline";
                       headerElement.addEventListener("click", () => {
                         chrome.tabs.sendMessage(tabId, {
                           msg: "scrollToElement",
