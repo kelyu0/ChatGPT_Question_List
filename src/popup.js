@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         {
           target: { tabId: tabId },
           func: () => {
-            if (window === top) {
+            if (window == top) {
               chrome.runtime.onMessage.addListener(function (
                 req,
                 render,
@@ -27,30 +27,40 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
                     let pairs = [];
-                    for (let i = 0; i < userQuestions.length; i++) {
-                      const question = userQuestions[i]?.innerText || "";
-
-                      const answerElement = assistantAnswers[i];
-                      const answerFirstLine = answerElement
-                        ? answerElement.innerText.split("\n")[0].slice(0, 50) + (answerElement.innerText.length > 50 ? "..." : "")
-                        : "";
+                    userQuestions.forEach((question, index) => {
+                      question.id = `question-${index}`;
+                      const hasImage = question.querySelector("img") ? "[image] " : "";
+                      const answer = assistantAnswers[index];
+                      if (answer) {
+                        answer.id = `answer-${index}`;
+                      }
 
                       const headers = Array.from(
-                        answerElement?.querySelectorAll("h1, h2, h3, h4, h5, h6") || []
-                      ).map((header) => ({
-                        text: header.innerText,
-                        level: parseInt(header.tagName[1]), // Extract header level (e.g., 1 for h1)
-                      }));
+                        answer?.querySelectorAll("h1, h2, h3, h4, h5, h6") || []
+                      ).map((header, headerIndex) => {
+                        const headerId = `answer-${index}-header-${headerIndex}`;
+                        header.id = headerId;
+                        return {
+                          text: header.innerText,
+                          level: parseInt(header.tagName[1]),
+                          id: headerId,
+                        };
+                      });
 
-                      pairs.push({ question, answerFirstLine, headers, questionElementId: `user-${i}`, answerElementId: `answer-${i}` });
-                    }
+                      pairs.push({
+                        question: hasImage + question.innerText.split("\n")[0],
+                        answer: answer ? answer.innerText.split("\n")[0] : "No answer available",
+                        questionId: `question-${index}`,
+                        answerId: answer ? `answer-${index}` : null,
+                        headers: headers,
+                      });
+                    });
 
                     sendResponse(pairs);
                     break;
 
                   case "scrollToElement":
-                    const id = req.id;
-                    const el = document.getElementById(id);
+                    const el = document.getElementById(req.id);
                     if (el) {
                       el.scrollIntoView({
                         behavior: "smooth",
@@ -69,44 +79,39 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
 
-          // 内容脚本注入成功后，再发送消息
           chrome.tabs.sendMessage(
             tabId,
             { msg: "getQuestionList" },
             (response) => {
               if (response && response.length > 0) {
                 response.forEach((pair, index) => {
-                  // Display user question
                   const questionElement = document.createElement("div");
                   questionElement.className = "question";
-                  questionElement.innerText = `Q: ${pair.question.replace(/\n/g, " ")}`;
+                  questionElement.innerText = `Q: ${pair.question}`;
                   questionElement.title = pair.question;
-                  questionElement.id = pair.questionElementId;
                   questionElement.addEventListener("click", () => {
                     chrome.tabs.sendMessage(tabId, {
                       msg: "scrollToElement",
-                      id: pair.questionElementId,
+                      id: pair.questionId,
                     });
                   });
                   container.appendChild(questionElement);
 
-                  // Display assistant answers
                   const answerContainer = document.createElement("div");
                   answerContainer.className = "answer";
-                  answerContainer.id = pair.answerElementId;
 
-                  // First line of the answer
                   const firstLineElement = document.createElement("div");
-                  firstLineElement.innerText = `A: ${pair.answerFirstLine}`;
-                  firstLineElement.addEventListener("click", () => {
-                    chrome.tabs.sendMessage(tabId, {
-                      msg: "scrollToElement",
-                      id: pair.answerElementId,
+                  firstLineElement.innerText = `A: ${pair.answer}`;
+                  if (pair.answerId) {
+                    firstLineElement.addEventListener("click", () => {
+                      chrome.tabs.sendMessage(tabId, {
+                        msg: "scrollToElement",
+                        id: pair.answerId,
+                      });
                     });
-                  });
+                  }
                   answerContainer.appendChild(firstLineElement);
 
-                  // Headers
                   pair.headers.forEach((header) => {
                     const headerElement = document.createElement("div");
                     headerElement.style.marginLeft = `${header.level * 20}px`;
@@ -114,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headerElement.addEventListener("click", () => {
                       chrome.tabs.sendMessage(tabId, {
                         msg: "scrollToElement",
-                        id: pair.answerElementId,
+                        id: header.id,
                       });
                     });
                     answerContainer.appendChild(headerElement);
