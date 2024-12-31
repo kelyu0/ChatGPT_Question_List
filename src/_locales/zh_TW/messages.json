@@ -1,0 +1,11 @@
+{
+  "app_name": {
+    "message": "ChatGPT大綱"
+  },
+  "app_description": {
+    "message": "ChatGPT問題和答案大綱，答案支持顯示到具體子標題。點擊大綱項可以快捷跳轉。"
+  },
+  "welcome_message": {
+    "message": "歡迎使用我們的插件！"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "app_name": {
+    "message": "Tóm tắt ChatGPT"
+  },
+  "app_description": {
+    "message": "Một tóm tắt cho câu hỏi và câu trả lời của ChatGPT, hỗ trợ hiển thị các tiêu đề phụ cụ thể. Nhấp vào một mục để nhanh chóng chuyển đến."
+  },
+  "welcome_message": {
+    "message": "Chào mừng bạn đến với tiện ích của chúng tôi!"
+  }
+}

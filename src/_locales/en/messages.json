@@ -1,0 +1,12 @@
+{
+    "app_name": {
+      "message": "ChatGPT Outline"
+    },
+    "app_description": {
+      "message": "An outline for ChatGPT questions and answers, with support for displaying specific subheadings. Click an item to quickly jump."
+    },
+    "welcome_message": {
+      "message": "Welcome to our extension!"
+    }
+  }
+  

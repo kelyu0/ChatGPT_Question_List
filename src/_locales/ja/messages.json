@@ -1,0 +1,11 @@
+{
+  "app_name": {
+    "message": "ChatGPTアウトライン"
+  },
+  "app_description": {
+    "message": "ChatGPTの質問と回答のアウトラインで、具体的なサブタイトルを表示する機能をサポートします。項目をクリックすると、すばやくジャンプできます。"
+  },
+  "welcome_message": {
+    "message": "私たちの拡張機能をご利用いただきありがとうございます！"
+  }
+}

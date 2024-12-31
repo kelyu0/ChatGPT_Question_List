@@ -19,17 +19,29 @@
       box-sizing: border-box;
     }
 
+    .oneline {
+      white-space: nowrap; /* 强制单行显示 */
+      overflow: hidden; /* 隐藏溢出的部分 */
+      text-overflow: ellipsis; /* 使用省略号表示溢出的部分 */
+    }
+    
     .question {
       padding: 6px;
       margin: 0 -10px; /* 使其宽度覆盖整个容器 */
       border-bottom: 1px solid #ccc;
       cursor: pointer;
-      white-space: nowrap; /* 强制单行显示 */
-      overflow: hidden; /* 隐藏溢出的部分 */
-      text-overflow: ellipsis; /* 使用省略号表示溢出的部分 */
+      background-color: pink;
+    }
+
+    .answer {
+      padding: 6px;
+      border-bottom: 1px solid #ddd; /* 增加分隔线使其更清晰 */
     }
 
     .question:hover {
+      background-color: rgb(243, 147, 163); /* 背景颜色变为浅灰色 */
+    }
+    .answer:hover {
       background-color: #f0f0f0; /* 背景颜色变为浅灰色 */
     }
 
