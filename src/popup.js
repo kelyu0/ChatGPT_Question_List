@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.scripting.executeScript(
         {
           target: { tabId: tabId },
-          // files: ['content.js']
           func: () => {
             if (window == top) {
               chrome.runtime.onMessage.addListener(function (
@@ -20,24 +19,36 @@ document.addEventListener("DOMContentLoaded", () => {
               ) {
                 switch (req.msg) {
                   case "getQuestionList":
-                    const questions = document.querySelectorAll(
+                    const userQuestions = document.querySelectorAll(
                       'div[data-message-author-role="user"]'
                     );
-                    let questionList = [];
-                    questions.forEach((question, index) => {
-                      // 给每个问题元素添加ID，方便后续跳转
+                    const assistantAnswers = document.querySelectorAll(
+                      'div[data-message-author-role="assistant"]'
+                    );
+
+                    let pairs = [];
+                    userQuestions.forEach((question, index) => {
                       question.id = `question-${index}`;
-                      questionList.push(question.innerText);
+                      const answer = assistantAnswers[index];
+                      if (answer) {
+                        answer.id = `answer-${index}`;
+                      }
+                      pairs.push({
+                        question: question.innerText,
+                        answer: answer ? answer.innerText.split("\n")[0] : "",
+                        questionId: `question-${index}`,
+                        answerId: answer ? `answer-${index}` : null,
+                      });
                     });
-                    sendResponse(questionList);
+
+                    sendResponse(pairs);
                     break;
 
-                  case "scrollToQuestion":
-                    const id = `question-${req.id}`;
-                    const el = document.getElementById(id);
+                  case "scrollToElement":
+                    const el = document.getElementById(req.id);
                     if (el) {
                       el.scrollIntoView({
-                        behavior: "smooth", //instant
+                        behavior: "smooth",
                         block: "center",
                       });
                     }
@@ -53,29 +64,40 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
 
-          // 内容脚本注入成功后，再发送消息
           chrome.tabs.sendMessage(
             tabId,
             { msg: "getQuestionList" },
             (response) => {
               if (response && response.length > 0) {
-                response.forEach((question, index) => {
+                response.forEach((pair, index) => {
                   const questionElement = document.createElement("div");
                   questionElement.className = "question";
-                  // console.log("question", question);
-                  questionElement.innerText =
-                    "- " + question.replace(/[\n\r]/g, " "); // 替换换行符为空格
-                  questionElement.title = question; // 设置title属性以显示完整内容
+                  questionElement.innerText = `Q: ${pair.question.replace(/[\n\r]/g, " ")}`;
+                  // questionElement.innerText = `Q: ${pair.question}`;
+                  questionElement.title = pair.question;
                   questionElement.addEventListener("click", () => {
                     chrome.tabs.sendMessage(tabId, {
-                      msg: "scrollToQuestion",
-                      id: index,
+                      msg: "scrollToElement",
+                      id: pair.questionId,
                     });
                   });
                   container.appendChild(questionElement);
+
+                  const answerElement = document.createElement("div");
+                  answerElement.className = "answer";
+                  answerElement.innerText = `A: ${pair.answer}`;
+                  if (pair.answerId) {
+                    answerElement.addEventListener("click", () => {
+                      chrome.tabs.sendMessage(tabId, {
+                        msg: "scrollToElement",
+                        id: pair.answerId,
+                      });
+                    });
+                  }
+                  container.appendChild(answerElement);
                 });
               } else {
-                container.innerText = "No questions found";
+                container.innerText = "No questions or answers found";
               }
             }
           );
