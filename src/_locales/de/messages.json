@@ -1,0 +1,11 @@
+{
+  "app_name": {
+    "message": "ChatGPT Gliederung"
+  },
+  "app_description": {
+    "message": "Eine Gliederung für ChatGPT-Fragen und -Antworten mit Unterstützung für spezifische Unterüberschriften. Klicken Sie auf ein Element, um schnell zu springen."
+  },
+  "welcome_message": {
+    "message": "Willkommen bei unserer Erweiterung!"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "app_name": {
+    "message": "Índice de ChatGPT"
+  },
+  "app_description": {
+    "message": "Un índice para preguntas y respuestas de ChatGPT, con soporte para mostrar subtítulos específicos. Haga clic en un elemento para saltar rápidamente."
+  },
+  "welcome_message": {
+    "message": "¡Bienvenido a nuestra extensión!"
+  }
+}

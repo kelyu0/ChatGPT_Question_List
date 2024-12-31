@@ -1,0 +1,12 @@
+{
+    "app_name": {
+      "message": "chagpt大纲"
+    },
+    "app_description": {
+      "message": "chagpt问题和答案大纲，答案支持显示到具体子标题。点击大纲项可以快捷跳转。"
+    },
+    "welcome_message": {
+      "message": "欢迎使用我们的插件！"
+    }
+}
+  

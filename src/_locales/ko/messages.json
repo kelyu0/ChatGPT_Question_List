@@ -1,0 +1,11 @@
+{
+  "app_name": {
+    "message": "ChatGPT 개요"
+  },
+  "app_description": {
+    "message": "ChatGPT 질문과 답변의 개요를 제공하며, 특정 하위 제목 표시를 지원합니다. 항목을 클릭하면 빠르게 이동할 수 있습니다."
+  },
+  "welcome_message": {
+    "message": "우리의 확장을 사용해 주셔서 감사합니다!"
+  }
+}

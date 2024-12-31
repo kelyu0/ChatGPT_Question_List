@@ -1,0 +1,12 @@
+{
+    "app_name": {
+      "message": "Sommaire ChatGPT"
+    },
+    "app_description": {
+      "message": "Un sommaire pour les questions et réponses de ChatGPT, avec prise en charge de l'affichage des sous-titres spécifiques. Cliquez sur un élément pour accéder rapidement."
+    },
+    "welcome_message": {
+      "message": "Bienvenue dans notre extension !"
+    }
+  }
+  
