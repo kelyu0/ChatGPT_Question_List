@@ -19,41 +19,61 @@ document.addEventListener("DOMContentLoaded", () => {
               ) {
                 switch (req.msg) {
                   case "getQuestionList":
-                    const userQuestions = document.querySelectorAll(
-                      'div[data-message-author-role="user"]'
-                    );
-                    const assistantAnswers = document.querySelectorAll(
-                      'div[data-message-author-role="assistant"]'
-                    );
+                    const articles = document.querySelectorAll("article");
 
                     let pairs = [];
-                    userQuestions.forEach((question, index) => {
-                      question.id = `question-${index}`;
-                      const hasImage = question.querySelector("img") ? "[image] " : "";
-                      const answer = assistantAnswers[index];
-                      if (answer) {
-                        answer.id = `answer-${index}`;
+
+                    articles.forEach((article, index) => {
+                      const userQuestion = article.querySelector('div[data-message-author-role="user"]');
+                      const assistantAnswers = article.querySelectorAll('div[data-message-author-role="assistant"]');
+
+                      if (userQuestion) {
+                        // This article contains a user question
+                        userQuestion.id = `question-${index}`;
+                        const hasImage = userQuestion.querySelector("img") ? "[image] " : "";
+
+                        pairs.push({
+                          question: hasImage + userQuestion.innerText.trim().replace(/[\n\r]/g, " "),
+                          // question: hasImage + userQuestion.innerText.trim(),
+                          answers: [],
+                          questionId: `question-${index}`,
+                          headers: [],
+                        });
+                      } else if (assistantAnswers.length > 0) {
+                        // This article contains assistant answers
+                        let answers = [];
+                        let headers = [];
+
+                        assistantAnswers.forEach((answer, answerIndex) => {
+                          answer.id = `answer-${index}-${answerIndex}`;
+                          answers.push({
+                            text: answer.innerText.trim() || "No content available",
+                            id: `answer-${index}-${answerIndex}`,
+                          });
+
+                          headers = headers.concat(
+                            Array.from(
+                              answer.querySelectorAll("h1, h2, h3, h4, h5, h6") || []
+                            ).map((header, headerIndex) => {
+                              const headerId = `answer-${index}-${answerIndex}-header-${headerIndex}`;
+                              header.id = headerId;
+                              return {
+                                text: header.innerText,
+                                level: parseInt(header.tagName[1]),
+                                id: headerId,
+                              };
+                            })
+                          );
+                        });
+
+                        pairs.push({
+                          question: null,
+                          // answers: answers,
+                          answers: answers ? answers.innerText.split("\n")[0] : "No answer available",
+                          questionId: null,
+                          headers: headers,
+                        });
                       }
-
-                      const headers = Array.from(
-                        answer?.querySelectorAll("h1, h2, h3, h4, h5, h6") || []
-                      ).map((header, headerIndex) => {
-                        const headerId = `answer-${index}-header-${headerIndex}`;
-                        header.id = headerId;
-                        return {
-                          text: header.innerText,
-                          level: parseInt(header.tagName[1]),
-                          id: headerId,
-                        };
-                      });
-
-                      pairs.push({
-                        question: hasImage + question.innerText.split("\n")[0],
-                        answer: answer ? answer.innerText.split("\n")[0] : "No answer available",
-                        questionId: `question-${index}`,
-                        answerId: answer ? `answer-${index}` : null,
-                        headers: headers,
-                      });
                     });
 
                     sendResponse(pairs);
@@ -85,47 +105,52 @@ document.addEventListener("DOMContentLoaded", () => {
             (response) => {
               if (response && response.length > 0) {
                 response.forEach((pair, index) => {
-                  const questionElement = document.createElement("div");
-                  questionElement.className = "question";
-                  questionElement.innerText = `Q: ${pair.question}`;
-                  questionElement.title = pair.question;
-                  questionElement.addEventListener("click", () => {
-                    chrome.tabs.sendMessage(tabId, {
-                      msg: "scrollToElement",
-                      id: pair.questionId,
-                    });
-                  });
-                  container.appendChild(questionElement);
-
-                  const answerContainer = document.createElement("div");
-                  answerContainer.className = "answer";
-
-                  const firstLineElement = document.createElement("div");
-                  firstLineElement.innerText = `A: ${pair.answer}`;
-                  if (pair.answerId) {
-                    firstLineElement.addEventListener("click", () => {
+                  if (pair.question) {
+                    const questionElement = document.createElement("div");
+                    questionElement.className = "question";
+                    questionElement.innerText = `Q: ${pair.question}`;
+                    questionElement.title = pair.question;
+                    questionElement.addEventListener("click", () => {
                       chrome.tabs.sendMessage(tabId, {
                         msg: "scrollToElement",
-                        id: pair.answerId,
+                        id: pair.questionId,
                       });
                     });
+                    container.appendChild(questionElement);
                   }
-                  answerContainer.appendChild(firstLineElement);
 
-                  pair.headers.forEach((header) => {
-                    const headerElement = document.createElement("div");
-                    headerElement.style.marginLeft = `${header.level * 20}px`;
-                    headerElement.innerText = `H${header.level}: ${header.text}`;
-                    headerElement.addEventListener("click", () => {
-                      chrome.tabs.sendMessage(tabId, {
-                        msg: "scrollToElement",
-                        id: header.id,
+                  if (pair.answers.length > 0) {
+                    const answerContainer = document.createElement("div");
+                    answerContainer.className = "answer";
+
+                    pair.answers.forEach((answer) => {
+                      const answerElement = document.createElement("div");
+                      answerElement.innerText = `A: ${answer.text}`;
+                      answerElement.addEventListener("click", () => {
+                        chrome.tabs.sendMessage(tabId, {
+                          msg: "scrollToElement",
+                          id: answer.id,
+                        });
                       });
+                      answerContainer.appendChild(answerElement);
                     });
-                    answerContainer.appendChild(headerElement);
-                  });
 
-                  container.appendChild(answerContainer);
+                    pair.headers.forEach((header) => {
+                      const headerElement = document.createElement("div");
+                      const indentLevel = header.level - 1; // Adjust indentation
+                      headerElement.style.marginLeft = `${indentLevel * 20}px`;
+                      headerElement.innerText = `H${header.level}: ${header.text}`;
+                      headerElement.addEventListener("click", () => {
+                        chrome.tabs.sendMessage(tabId, {
+                          msg: "scrollToElement",
+                          id: header.id,
+                        });
+                      });
+                      answerContainer.appendChild(headerElement);
+                    });
+
+                    container.appendChild(answerContainer);
+                  }
                 });
               } else {
                 container.innerText = "No questions or answers found";
