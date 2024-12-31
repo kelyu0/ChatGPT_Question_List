@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         pairs.push({
                           question: hasImage + userQuestion.innerText.trim().replace(/[\n\r]/g, " "),
-                          // question: hasImage + userQuestion.innerText.trim(),
                           answers: [],
                           questionId: `question-${index}`,
                           headers: [],
@@ -47,7 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         assistantAnswers.forEach((answer, answerIndex) => {
                           answer.id = `answer-${index}-${answerIndex}`;
                           answers.push({
-                            text: answer.innerText.trim() || "No content available",
+                            // text: answer.innerText.trim() || "No content available",
+                            text: answer.innerText.trim().replace(/[\n\r]/g, " ") || "No content available",
                             id: `answer-${index}-${answerIndex}`,
                           });
 
@@ -68,8 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         pairs.push({
                           question: null,
-                          // answers: answers,
-                          answers: answers ? answers.innerText.split("\n")[0] : "No answer available",
+                          answers: answers,
                           questionId: null,
                           headers: headers,
                         });

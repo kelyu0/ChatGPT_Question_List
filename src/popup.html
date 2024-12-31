@@ -27,7 +27,7 @@
       white-space: nowrap; /* 强制单行显示 */
       overflow: hidden; /* 隐藏溢出的部分 */
       text-overflow: ellipsis; /* 使用省略号表示溢出的部分 */
-      background-color: pink;
+      /* background-color: pink; */
     }
 
     .answer {
@@ -35,9 +35,13 @@
       white-space: nowrap; /* 强制单行显示 */
       overflow: hidden; /* 隐藏溢出的部分 */
       text-overflow: ellipsis; /* 使用省略号表示溢出的部分 */
+      border-bottom: 1px solid #ddd; /* 增加分隔线使其更清晰 */
     }
 
     .question:hover {
+      background-color: pink; /* 背景颜色变为浅灰色 */
+    }
+    .answer:hover {
       background-color: #f0f0f0; /* 背景颜色变为浅灰色 */
     }
 
