@@ -84,9 +84,10 @@ document.addEventListener("DOMContentLoaded", () => {
                   case "scrollToElement":
                     const el = document.getElementById(req.id);
                     if (el) {
+                      el.style.scrollMarginTop = "100px"; 
                       el.scrollIntoView({
                         behavior: "smooth",
-                        block: "center",
+                        block: "start",//start center
                       });
                     }
                     break;
@@ -141,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       const headerElement = document.createElement("div");
                       const indentLevel = pair.maxHeaderLevel ? header.level - pair.maxHeaderLevel : header.level - 1;
                       headerElement.style.marginLeft = `${Math.max(0, indentLevel) * 20}px`;
-                      headerElement.innerText = `H${header.level}: ${header.text}`.replace(/[\n\r]/g, " ");
+                      headerElement.innerText = `- ${header.text}`.replace(/[\n\r]/g, " ");
                       headerElement.className = "oneline";
                       headerElement.addEventListener("click", () => {
                         chrome.tabs.sendMessage(tabId, {
