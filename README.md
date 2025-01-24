@@ -1,4 +1,6 @@
 # ChatGPT_Question_List
+
+v1.6 打开时定位到最新；颜色
 v1.5 改zh错字；去掉答案的 Hn；scroll begin
 v1.4 加lang
 v1.3 加A;改名

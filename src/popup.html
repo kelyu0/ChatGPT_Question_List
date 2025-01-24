@@ -20,33 +20,36 @@
     }
 
     .oneline {
-      white-space: nowrap; /* 强制单行显示 */
-      overflow: hidden; /* 隐藏溢出的部分 */
-      text-overflow: ellipsis; /* 使用省略号表示溢出的部分 */
+      white-space: nowrap; 
+      overflow: hidden; 
+      text-overflow: ellipsis;  
     }
     
     .question {
       padding: 6px;
-      margin: 0 -10px; /* 使其宽度覆盖整个容器 */
+      margin: 0 -10px; 
       border-bottom: 1px solid #ccc;
       cursor: pointer;
-      background-color: pink;
+      background-color: rgb(132, 195, 234);
     }
 
-    .answer {
-      padding: 6px;
-      border-bottom: 1px solid #ddd; /* 增加分隔线使其更清晰 */
+    .answerline {
+      /* padding: 6px; */
+      /* border-bottom: 1px solid #ddd;  */
     }
-
+    /* 悬浮 */
+    .online:hover {
+      background-color: #c34d4d;
+    }
     .question:hover {
-      background-color: rgb(243, 147, 163); /* 背景颜色变为浅灰色 */
+      background-color: rgb(63, 168, 238);  
     }
-    .answer:hover {
-      background-color: #f0f0f0; /* 背景颜色变为浅灰色 */
+    .answerline:hover {
+      background-color: #f0f0f0; 
     }
-
+    
     .question:first-child {
-      border-top: 1px solid #ccc; /* 第一个问题顶部加上分割线 */
+      border-top: 1px solid #ccc;
     }
   </style>
 </head>

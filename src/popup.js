@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
                       const assistantAnswers = article.querySelectorAll('div[data-message-author-role="assistant"]');
 
                       if (userQuestion) {
-                        // This article contains a user question
                         userQuestion.id = `question-${index}`;
                         const hasImage = userQuestion.querySelector("img") ? "[image] " : "";
 
@@ -39,14 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
                           headers: [],
                         });
                       } else if (assistantAnswers.length > 0) {
-                        // This article contains assistant answers
                         let answers = [];
                         let headers = [];
 
                         assistantAnswers.forEach((answer, answerIndex) => {
                           answer.id = `answer-${index}-${answerIndex}`;
                           answers.push({
-                            // text: answer.innerText.trim() || "No content available",
                             text: answer.innerText.trim().replace(/[\n\r]/g, " ") || "No content available",
                             id: `answer-${index}-${answerIndex}`,
                           });
@@ -87,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       el.style.scrollMarginTop = "100px"; 
                       el.scrollIntoView({
                         behavior: "smooth",
-                        block: "start",//start center
+                        block: "start",
                       });
                     }
                     break;
@@ -129,6 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     pair.answers.forEach((answer) => {
                       const answerElement = document.createElement("div");
                       answerElement.innerText = `A: ${answer.text}`;
+                      answerElement.className = "oneline answerline";
                       answerElement.addEventListener("click", () => {
                         chrome.tabs.sendMessage(tabId, {
                           msg: "scrollToElement",
@@ -143,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       const indentLevel = pair.maxHeaderLevel ? header.level - pair.maxHeaderLevel : header.level - 1;
                       headerElement.style.marginLeft = `${Math.max(0, indentLevel) * 20}px`;
                       headerElement.innerText = `- ${header.text}`.replace(/[\n\r]/g, " ");
-                      headerElement.className = "oneline";
+                      headerElement.className = "oneline answerline";
                       headerElement.addEventListener("click", () => {
                         chrome.tabs.sendMessage(tabId, {
                           msg: "scrollToElement",
@@ -155,6 +153,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     container.appendChild(answerContainer);
                   }
+                });
+
+                // 滚动到最新问题（列表底部）
+                container.scrollTo({
+                  top: container.scrollHeight,
+                  behavior: "instant",
                 });
               } else {
                 container.innerText = "No questions or answers found";
